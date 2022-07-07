@@ -9,6 +9,7 @@ import dateutil.parser
 import pytz
 from olxcleaner.parser.parser_exceptions import InvalidSetting, DateOrdering
 
+
 class EdxObject(ABC):
     """Abstract base class for edX structure objects"""
 
@@ -34,7 +35,7 @@ class EdxObject(ABC):
     # Can this object be referenced using pointer tags? (if True, then can be located in the directory of the appropriate type)
     can_be_pointer = True
     # What attributes are needed to be a pointer tag?
-    pointer_attr = {'url_name'}
+    pointer_attr = {"url_name"}
 
     # What depth does this object typically appear at? (used for reporting)
     depth = 0
@@ -145,9 +146,13 @@ class EdxObject(ABC):
         for cls in EdxObject._subclasses:
             if cls.type == object_type:
                 return cls()
-        raise ValueError(f"Cannot instantiate object of unknown type <{object_type}>")  # pragma: no cover
+        raise ValueError(
+            f"Cannot instantiate object of unknown type <{object_type}>"
+        )  # pragma: no cover
 
-    def validate_entry_from_allowed(self, setting_name, allowed_list, errorstore, missing_ok=True):
+    def validate_entry_from_allowed(
+        self, setting_name, allowed_list, errorstore, missing_ok=True
+    ):
         """
         Validate that the entry under the setting setting_name for this object is in the allowed list.
         If not, put the error in the errorstore.
@@ -163,7 +168,9 @@ class EdxObject(ABC):
         if entry is None:
             if not missing_ok:  # pragma: no cover
                 msg = f"The tag {self} does not have the required setting '{setting_name}'."
-                errorstore.add_error(InvalidSetting(self.filenames[-1], msg=msg))
+                errorstore.add_error(
+                    InvalidSetting(self.filenames[-1], msg=msg)
+                )
             return
         elif entry not in allowed_list:
             msg = f"The tag {self} has an invalid setting '{setting_name}={entry}'."
@@ -201,7 +208,9 @@ class EdxObject(ABC):
         # Handle the cleaning part
         # Done in a separate routine, so that that routine can be called when we don't want to overwrite setting
         date = self.attributes.get(setting_name)
-        self.attributes[setting_name] = self.convert2date(date, errorstore, setting_name)
+        self.attributes[setting_name] = self.convert2date(
+            date, errorstore, setting_name
+        )
 
     def convert2date(self, date, errorstore, setting_name):
         """
@@ -214,7 +223,10 @@ class EdxObject(ABC):
         # Make sure it parses properly
         try:
             parsed_date = dateutil.parser.parse(date)
-            if parsed_date.tzinfo is None or parsed_date.tzinfo.utcoffset(parsed_date) is None:
+            if (
+                parsed_date.tzinfo is None
+                or parsed_date.tzinfo.utcoffset(parsed_date) is None
+            ):
                 # Apply a timezone to the date
                 return pytz.utc.localize(parsed_date)
             else:
@@ -225,7 +237,9 @@ class EdxObject(ABC):
             errorstore.add_error(InvalidSetting(self.filenames[-1], msg=msg))
             return None
 
-    def ensure_date_order(self, date1, date2, errorstore, error_msg, same_ok=False):
+    def ensure_date_order(
+        self, date1, date2, errorstore, error_msg, same_ok=False
+    ):
         """
         Ensures that the dates appear in order date1 < date2. If not, stores msg as an error in errorstore.
         If either date is None, no comparison is made.
@@ -261,7 +275,9 @@ class EdxObject(ABC):
         try:
             if attempts and int(attempts) < 1:
                 msg = f"The tag {self} should have a positive number of attempts."
-                errorstore.add_error(InvalidSetting(self.filenames[-1], msg=msg))
+                errorstore.add_error(
+                    InvalidSetting(self.filenames[-1], msg=msg)
+                )
         except ValueError:
             msg = f"The tag {self} should have a positive number of attempts."
             errorstore.add_error(InvalidSetting(self.filenames[-1], msg=msg))
@@ -281,9 +297,18 @@ class EdxContent(EdxObject, metaclass=ABCMeta):
 
 
 # Collections of constants
-show_answer_list = ["always", "answered", "attempted", "closed", "finished", "correct_or_past_due",
-                    "past_due", "never", "after_attempts"]
+show_answer_list = [
+    "always",
+    "answered",
+    "attempted",
+    "closed",
+    "finished",
+    "correct_or_past_due",
+    "past_due",
+    "never",
+    "after_attempts",
+]
 
 randomize_list = ["always", "onreset", "never", "per_student"]
 
-show_correctness_list = ['always', 'past_due', 'never']
+show_correctness_list = ["never"]
