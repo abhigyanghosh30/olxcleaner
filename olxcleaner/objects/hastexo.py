@@ -5,35 +5,18 @@ vertical.py
 Object description for an OLX vertical tag
 """
 from olxcleaner.objects.common import (
-    EdxObject,
+    EdxContent,
     show_answer_list,
     randomize_list,
     show_correctness_list,
 )
 
 
-class EdxVertical(EdxObject):
-    """edX vertical object"""
+class EdxHastexo(EdxContent):
+    """edX Library Content object"""
 
-    type = "vertical"
-    depth = 3
-    display_name = True
-
-    @property
-    def allowed_children(self):
-        return [
-            "html",
-            "video",
-            "discussion",
-            "problem",
-            "lti",
-            "lti_consumer",
-            "drag-and-drop-v2",
-            "openassessment",
-            "split_test",
-            "library_content",
-            "hastexo",
-        ]
+    type = "hastexo"
+    display_name = False
 
     def validate(self, course, errorstore):
         """
@@ -90,3 +73,5 @@ class EdxVertical(EdxObject):
             same_ok=True,
             error_msg="due date must be before course end date",
         )
+
+        self.require_setting("delete_age", errorstore)

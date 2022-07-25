@@ -12,12 +12,12 @@ from olxcleaner.objects.common import (
 )
 
 
-class EdxVertical(EdxObject):
-    """edX vertical object"""
+class EdxLibraryContent(EdxObject):
+    """edX Library Content object"""
 
-    type = "vertical"
-    depth = 3
-    display_name = True
+    type = "library_content"
+    depth = 4
+    display_name = False
 
     @property
     def allowed_children(self):
@@ -30,9 +30,6 @@ class EdxVertical(EdxObject):
             "lti_consumer",
             "drag-and-drop-v2",
             "openassessment",
-            "split_test",
-            "library_content",
-            "hastexo",
         ]
 
     def validate(self, course, errorstore):
